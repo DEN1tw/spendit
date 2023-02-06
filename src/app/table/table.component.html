@@ -1,0 +1,48 @@
+<ng-container *ngIf="columnHeaders?.length && dataMap.size">
+  <table class="w-full text-sm text-left text-gray-500">
+    <thead class="text-xs text-gray-700 bg-gray-50">
+    <tr>
+      <th scope="col" class="px-6 py-3"*ngIf="selectable">
+        <input
+          type="checkbox"
+          (change)="toggleAllSelection($event.target)"
+          [checked]="allSelected"
+        />
+      </th>
+      <th scope="col" class="px-6 py-3" *ngFor="let header of columnHeaders">
+        <ng-container *ngIf="header.headerHtml">
+          <ng-container
+            *ngTemplateOutlet="
+                header.headerHtml;
+                context: { headerName: header.headerName ?? header.field }
+              "
+          ></ng-container>
+        </ng-container>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let row of dataMap | keyvalue">
+      <td  class="px-6 py-4" *ngIf="selectable">
+        <input
+          type="checkbox"
+          (change)="toggleSelection(row.key, $event.target)"
+          [checked]="row.value"
+        />
+      </td>
+      <td class="px-6 py-4" *ngFor="let header of columnHeaders">
+        <ng-container *ngIf="header.headerHtml">
+          {{ row.key[header.field] }}
+        </ng-container>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <app-pagination
+    *ngIf="sourceType === 'PromisedPaginated'"
+    [currentPage]="currentPage"
+    [take]="take"
+    [total]="total"
+    (changePage)="changePage($event)"
+  ></app-pagination>
+</ng-container>
